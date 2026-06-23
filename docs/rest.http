@@ -1,0 +1,11 @@
+POST http://localhost:8080/campaigns
+
+{
+    "Name": "mouse",
+    "Content": "Change password",
+    "Emails": ["teste@email.com"]
+}
+
+###
+
+GET http://localhost:8080/campaigns
