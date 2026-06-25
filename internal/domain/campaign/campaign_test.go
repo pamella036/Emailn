@@ -33,6 +33,14 @@ func TestNewCampaign_IDIsNotNil(t *testing.T) {
 	assert.NotNil(campaign.ID)
 }
 
+func TestNewCampaign_MustStatusStartWithPending(t *testing.T) {
+	assert := assert.New(t)
+
+	campaign, _ := NewCampaign(name, content, contacts)
+
+	assert.NotNil(Pending, campaign.Status)
+}
+
 func Test_NewCampaign_CreatdOnMustBeNow(t *testing.T) {
 	assert := assert.New(t)
 	now := time.Now().Add(-time.Minute)

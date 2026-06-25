@@ -1,11 +1,19 @@
 POST http://localhost:8080/campaigns
 
 {
-    "Name": "mouse",
+    "Name": "change",
     "Content": "Change password",
-    "Emails": ["teste@email.com"]
+    "Emails": ["pamella@email.com", "pamella2@email.com", "pamella3@email.com"]
 }
 
 ###
 
-GET http://localhost:8080/campaigns
+GET http://localhost:8080/campaigns/d8tjdd5cu9u0h409v150
+
+###
+
+PATCH http://localhost:8080/campaigns/cancel/dd8tjdd5cu9u0h409v150
+
+###
+
+Delete http://localhost:8080/campaigns/delete/d8tjnotcu9u2ho7ne40g
