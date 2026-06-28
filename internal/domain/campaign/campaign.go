@@ -1,7 +1,7 @@
 package campaign
 
 import (
-	"emailn/internal/internalErrors"
+	internalerrors "emailn/internal/internal-errors"
 	"errors"
 	"time"
 
@@ -63,7 +63,7 @@ func NewCampaign(name string, content string, emails []string) (*Campaign, error
 		Contacts:  contacts,
 		Status:    Pending,
 	}
-	err := internalErrors.ValidateStruct(campaign)
+	err := internalerrors.ValidateStruct(campaign)
 	if err == nil {
 		return campaign, nil
 	}

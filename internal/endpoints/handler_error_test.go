@@ -1,7 +1,7 @@
 package endpoints
 
 import (
-	internalerrors "emailn/internal/internalErrors"
+	internalerrors "emailn/internal/internal-errors"
 	"encoding/json"
 	"errors"
 	"net/http"

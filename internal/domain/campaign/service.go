@@ -2,14 +2,15 @@ package campaign
 
 import (
 	"emailn/internal/contract"
-	"emailn/internal/internalErrors"
+	internalerrors "emailn/internal/internal-errors"
 	"errors"
+
+	"gorm.io/gorm"
 )
 
 type Service interface {
 	Create(newCapaign contract.NewCampaign) (string, error)
 	GetBy(id string) (*contract.CampaignResponse, error)
-	Cancel(id string) error
 	Delete(id string) error
 }
 
@@ -25,7 +26,7 @@ func (s *ServiceImp) Create(newCampaign contract.NewCampaign) (string, error) {
 	}
 	err = s.Repository.Create(campaign)
 	if err != nil {
-		return "", internalErrors.ErrInternal
+		return "", internalerrors.ErrInternal
 	}
 
 	return campaign.ID, nil
@@ -36,7 +37,10 @@ func (s *ServiceImp) GetBy(id string) (*contract.CampaignResponse, error) {
 	campaign, err := s.Repository.GetBy(id)
 
 	if err != nil {
-		return nil, internalErrors.ErrInternal
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, internalerrors.ErrInternal
+		}
+		return nil, internalerrors.ProcessErrorToReturn(err)
 	}
 
 	return &contract.CampaignResponse{
@@ -48,31 +52,12 @@ func (s *ServiceImp) GetBy(id string) (*contract.CampaignResponse, error) {
 	}, nil
 }
 
-func (s *ServiceImp) Cancel(id string) error {
-
-	campaign, err := s.Repository.GetBy(id)
-
-	if err != nil {
-		return internalErrors.ErrInternal
-	}
-
-	if campaign.Status != Pending {
-		return errors.New("Campaing status invalid")
-	}
-
-	campaign.Cancel()
-	err = s.Repository.Create(campaign)
-	if err != nil {
-		return internalErrors.ErrInternal
-	}
-	return nil
-}
 
 func (s *ServiceImp) Delete(id string) error {
 	campaign, err := s.Repository.GetBy(id)
 
 	if err != nil {
-		return internalErrors.ErrInternal
+		return internalerrors.ProcessErrorToReturn(err)
 	}
 
 	if campaign.Status != Pending {
@@ -82,7 +67,7 @@ func (s *ServiceImp) Delete(id string) error {
 	campaign.Delete()
 	err = s.Repository.Delete(campaign)
 	if err != nil {
-		return internalErrors.ErrInternal
+		return internalerrors.ErrInternal
 	}
 	return nil
 }

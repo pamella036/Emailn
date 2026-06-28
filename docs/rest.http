@@ -8,12 +8,26 @@ POST http://localhost:8080/campaigns
 
 ###
 
-GET http://localhost:8080/campaigns/d8tjdd5cu9u0h409v150
+GET http://localhost:8080/campaigns/d8tjd
 
 ###
 
-PATCH http://localhost:8080/campaigns/cancel/dd8tjdd5cu9u0h409v150
+PATCH http://localhost:8080/campaigns/cancel/dd8tjd4
 
 ###
 
-Delete http://localhost:8080/campaigns/delete/d8tjnotcu9u2ho7ne40g
+Delete http://localhost:8080/campaigns/delete/d8tjno
+
+###
+
+POST http://localhost:8080/realms/provider/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=emailn&client_secret=PJr8cwkbcELZnQoMHv1h2QrpZ1I9qbU7&grant_type=client_credentials
+
+###
+
+POST http://localhost:8080/realms/provider/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=emailn_users&username=pamella&password=123456&grant_type=password
