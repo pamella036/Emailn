@@ -1,33 +1,42 @@
-POST http://localhost:8080/campaigns
+@url = http://localhost:4444
+@identity_provider = http://localhost:8080
+
+###
+GET {{url}}/ping
+
+###
+POST {{url}}/campaigns
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
 
 {
     "Name": "change",
     "Content": "Change password",
-    "Emails": ["pamella@email.com", "pamella2@email.com", "pamella3@email.com"]
+    "Emails": ["pamella@email.com"]
 }
 
 ###
 
-GET http://localhost:8080/campaigns/d8tjd
+GET {{url}}/campaigns/d8tjd
+Authorization: Bearer {{access_token}}
 
 ###
 
-PATCH http://localhost:8080/campaigns/cancel/dd8tjd4
+PATCH {{url}}/campaigns/cancel/dd8tjd4
+Authorization: Bearer {{access_token}}
 
 ###
 
-Delete http://localhost:8080/campaigns/delete/d8tjno
+Delete {{url}}/campaigns/delete/d8tjno
+Authorization: Bearer {{access_token}}
 
 ###
 
-POST http://localhost:8080/realms/provider/protocol/openid-connect/token
+# @name token
+POST {{identity_provider}}/realms/provider/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
-client_id=emailn&client_secret=PJr8cwkbcELZnQoMHv1h2QrpZ1I9qbU7&grant_type=client_credentials
+client_id=emailn&username=pamella&password=123456&grant_type=password
 
 ###
-
-POST http://localhost:8080/realms/provider/protocol/openid-connect/token
-Content-Type: application/x-www-form-urlencoded
-
-client_id=emailn_users&username=pamella&password=123456&grant_type=password
+@access_token = {{token.response.body.access_token}}

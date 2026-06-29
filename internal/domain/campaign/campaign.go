@@ -23,12 +23,13 @@ type Contact struct {
 }
 
 type Campaign struct {
-	ID        string    `validate:"required" gorm:"size:50"`
-	Name      string    `validate:"min=5,max=24" gorm:"size:100"`
-	CreatedOn time.Time `validate:"required"`
-	Content   string    `validate:"min=5,max=1024" gorm:"size:1024"`
-	Contacts  []Contact `validate:"min=1"`
-	Status    string    `gorm:"size:20"`
+    ID        string    `validate:"required" gorm:"size:50"`
+    Name      string    `validate:"min=5,max=24" gorm:"size:100"`
+    CreatedOn time.Time `validate:"required"`
+    Content   string    `validate:"min=5,max=1024" gorm:"size:1024"`
+    Contacts  []Contact `validate:"min=1,dive" gorm:"many2many:campaign_contacts;"` // <-- ADICIONE O ",dive" AQUI!
+    Status    string    `gorm:"size:20"`
+    CreatedBy string    `validate:"required" gorm:"size:50"`
 }
 
 func (c *Campaign) Cancel() {
@@ -39,7 +40,7 @@ func (c *Campaign) Delete() {
 	c.Status = Canceled
 }
 
-func NewCampaign(name string, content string, emails []string) (*Campaign, error) {
+func NewCampaign(name string, content string, emails []string, createdBy string) (*Campaign, error) {
 
 	if name == "" {
 		return nil, errors.New("Name is required")
@@ -62,6 +63,7 @@ func NewCampaign(name string, content string, emails []string) (*Campaign, error
 		CreatedOn: time.Now(),
 		Contacts:  contacts,
 		Status:    Pending,
+		CreatedBy: createdBy,
 	}
 	err := internalerrors.ValidateStruct(campaign)
 	if err == nil {
