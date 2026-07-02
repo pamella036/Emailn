@@ -4,6 +4,7 @@ import (
 	"emailn/internal/domain/campaign"
 	"emailn/internal/endpoints"
 	"emailn/internal/infraStructure/database"
+	"emailn/internal/infraStructure/mail"
 	"log"
 	"net/http"
 
@@ -14,7 +15,7 @@ import (
 
 func main() {
 
-	err := godotenv.Load("cmd/api/.env")
+	err := godotenv.Load("../../.env")
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
@@ -28,6 +29,7 @@ func main() {
 	db := database.NewDb()
 	campaignService := campaign.ServiceImp{
 		Repository: &database.CampaignRepository{Db: db},
+		SendMail: mail.SendMail,
 	}
 	handler := endpoints.Handler{
 		CampaignService: &campaignService,
@@ -40,6 +42,7 @@ func main() {
 		r.Post("/", endpoints.HandlerError(handler.CampaignsPost))
 		r.Get("/{id}", endpoints.HandlerError(handler.CampaignGetById))
 		r.Delete("/delete/{id}", endpoints.HandlerError(handler.CampaignDelete))
+		r.Patch("/start/{id}", endpoints.HandlerError(handler.CampaignStart))
 	})
 
 	http.ListenAndServe(":4444", r)

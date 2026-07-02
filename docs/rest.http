@@ -1,10 +1,12 @@
 @url = http://localhost:4444
 @identity_provider = http://localhost:8080
+@campaign_id = {{campaign_create.response.body.id}}
 
 ###
 GET {{url}}/ping
 
 ###
+# @name campaign_create
 POST {{url}}/campaigns
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
@@ -12,22 +14,27 @@ Content-Type: application/json
 {
     "Name": "change",
     "Content": "Change password",
-    "Emails": ["pamella@email.com"]
+    "Emails": ["pamella@email.com", "bruno@email.com", "josi@email.com","aline@email.com"]
 }
 
 ###
 
-GET {{url}}/campaigns/d8tjd
+GET {{url}}/campaigns/{{campaign_id}}
 Authorization: Bearer {{access_token}}
 
 ###
 
-PATCH {{url}}/campaigns/cancel/dd8tjd4
+PATCH {{url}}/campaigns/cancel/{{campaign_id}}
 Authorization: Bearer {{access_token}}
 
 ###
 
-Delete {{url}}/campaigns/delete/d8tjno
+Patch {{url}}/campaigns/start/{{campaign_id}}
+Authorization: Bearer {{access_token}}
+
+###
+
+Delete {{url}}/campaigns/delete/{{campaign_id}}
 Authorization: Bearer {{access_token}}
 
 ###
