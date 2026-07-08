@@ -41,7 +41,7 @@ func (s *ServiceImp) GetBy(id string) (*contract.CampaignResponse, error) {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, internalerrors.ErrInternal
 		}
-		return nil, internalerrors.ProcessErrorToReturn(err)
+		return nil, internalerrors.ErrInternal
 	}
 
 	return &contract.CampaignResponse{
@@ -70,6 +70,18 @@ func (s *ServiceImp) Delete(id string) error {
 	return nil
 }
 
+// TODO: make unit test
+func (s *ServiceImp) SendEmailAndUpdateStatus(campaignSaved *Campaign) {
+		err := s.SendMail(campaignSaved)
+		if err != nil {
+			campaignSaved.Fail()
+		} else {
+			campaignSaved.Done()
+		}
+		s.Repository.Update(campaignSaved)
+}
+
+// TODO: make unit test
 func (s *ServiceImp) Start(id string) error {
 	campaignSaved, err := s.getAndValidateStatusIsPending(id)
 
@@ -77,15 +89,12 @@ func (s *ServiceImp) Start(id string) error {
 		return err
 	}
 
-	err = s.SendMail(campaignSaved)
-	if err != nil {
-		return internalerrors.ProcessErrorToReturn(err)
-	}
+	go s.SendEmailAndUpdateStatus(campaignSaved)
 
-	campaignSaved.Done()
+	campaignSaved.Started()
 	err = s.Repository.Update(campaignSaved)
 	if err != nil {
-		return internalerrors.ProcessErrorToReturn(err)
+		return internalerrors.ErrInternal
 	}
 
 	return nil
@@ -95,7 +104,7 @@ func (s *ServiceImp) getAndValidateStatusIsPending(id string) (*Campaign, error)
 	campaign, err := s.Repository.GetBy(id)
 
 	if err != nil {
-		return nil, internalerrors.ProcessErrorToReturn(err)
+		return nil, internalerrors.ErrInternal
 	}
 
 	if campaign.Status != Pending {
