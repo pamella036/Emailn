@@ -9,8 +9,8 @@ import (
 func (h *Handler) CampaignGetById(w http.ResponseWriter, r *http.Request) (interface{}, int, error) {
 	id := chi.URLParam(r, "id")
 	campaign, err := h.CampaignService.GetBy(id)
-	if err == nil && campaign == nil {
-		return nil, http.StatusNotFound, err
+	if campaign == nil && err == nil {
+		return nil, http.StatusNotFound, nil
 	}
 	return campaign, 200, err
 }

@@ -24,7 +24,7 @@ func setup() {
 func newHttpTest(method, url string, body interface{}) (*http.Request, *httptest.ResponseRecorder) {
 	var buf bytes.Buffer
 	if body != nil {
-	json.NewEncoder(&buf).Encode(body)
+		json.NewEncoder(&buf).Encode(body)
 	}
 	req, _ := http.NewRequest(method, url, &buf)
 	rr := httptest.NewRecorder()
